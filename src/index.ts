@@ -35,9 +35,11 @@ export const extendedPrisma = prisma.$extends({
       // for (const row of rows) { /* check row.where has the same keys as uniqueColumns */ }
 
       // 2. Collect a union of all data columns across every row.
-      const allDataColumns = new Set<string>();
+      const allDataColumns = new Set<keyof T>();
       for (const row of rows) {
-        Object.keys(row.data).forEach((col) => allDataColumns.add(col));
+        Object.keys(row.data).forEach((col) =>
+          allDataColumns.add(col as keyof T)
+        );
       }
 
       if (allDataColumns.size === 0) return; // nothing to update
