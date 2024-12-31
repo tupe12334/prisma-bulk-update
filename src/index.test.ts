@@ -31,7 +31,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("user", [
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { name: "Alice Updated", status: "ACTIVE" },
