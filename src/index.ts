@@ -58,9 +58,11 @@ export const extendedPrisma = prisma.$extends({
             const andClause = uniqueColumns
               .map((uniqueKey) => `"${uniqueKey}" = '${row.where[uniqueKey]}'`)
               .join(" AND ");
-            return `WHEN (${andClause}) THEN '${
-              row.data[col as keyof typeof row.data]
-            }'`;
+            const value =
+              row.data[col as keyof typeof row.data] === null
+                ? "NULL"
+                : `'${row.data[col as keyof typeof row.data]}'`;
+            return `WHEN (${andClause}) THEN ${value}`;
           })
           .join(" ");
         return `"${col}" = CASE ${cases} ELSE "${col}" END`;

@@ -88,4 +88,106 @@ describe("bulkUpdateCompoundWhere", () => {
     expect(alice).toMatchObject({ name: "Alice Updated", status: "ACTIVE" });
     expect(bob).toMatchObject({ status: "INACTIVE" });
   });
+
+  it("should handle empty rows array", async () => {
+    await extendedPrisma.bulkUpdateCompoundWhere("User", []);
+    const users = await prisma.user.findMany();
+    expect(users).toHaveLength(0);
+  });
+
+  it("should not update if no matching rows", async () => {
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      ],
+    });
+
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+      {
+        where: { orgId: 2, email: "charlie@corp.com" },
+        data: { name: "Charlie", status: "ACTIVE" },
+      },
+    ]);
+
+    const users = await prisma.user.findMany();
+    expect(users).toEqual([
+      { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+      { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+    ]);
+  });
+
+  it("should update only specified fields", async () => {
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      ],
+    });
+
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+      {
+        where: { orgId: 1, email: "alice@corp.com" },
+        data: { status: "ACTIVE" },
+      },
+    ]);
+
+    const alice = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
+    });
+
+    expect(alice).toMatchObject({ name: "Alice", status: "ACTIVE" });
+  });
+
+  it("should handle multiple updates with overlapping data columns", async () => {
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      ],
+    });
+
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+      {
+        where: { orgId: 1, email: "alice@corp.com" },
+        data: { name: "Alice Updated", status: "ACTIVE" },
+      },
+      {
+        where: { orgId: 1, email: "bob@corp.com" },
+        data: { name: "Bob Updated", status: "INACTIVE" },
+      },
+    ]);
+
+    const alice = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
+    });
+    const bob = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "bob@corp.com" } },
+    });
+
+    expect(alice).toMatchObject({ name: "Alice Updated", status: "ACTIVE" });
+    expect(bob).toMatchObject({ name: "Bob Updated", status: "INACTIVE" });
+  });
+
+  it("should handle updates with null values", async () => {
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      ],
+    });
+
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+      {
+        where: { orgId: 1, email: "alice@corp.com" },
+        data: { name: null, status: "ACTIVE" },
+      },
+    ]);
+
+    const alice = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
+    });
+
+    expect(alice).toMatchObject({ name: null, status: "ACTIVE" });
+  });
 });
