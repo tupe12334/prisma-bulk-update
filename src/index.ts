@@ -56,7 +56,10 @@ export const extendedPrisma = prisma.$extends({
           .filter((row) => row.data[col] !== undefined)
           .map((row) => {
             const andClause = uniqueColumns
-              .map((uniqueKey) => `"${uniqueKey}" = '${row.where[uniqueKey]}'`)
+              .map(
+                (uniqueKey) =>
+                  `"${uniqueKey}" = '${row.where[uniqueKey as keyof T]}'`
+              )
               .join(" AND ");
             const value =
               row.data[col as keyof typeof row.data] === null
@@ -65,7 +68,7 @@ export const extendedPrisma = prisma.$extends({
             return `WHEN (${andClause}) THEN ${value}`;
           })
           .join(" ");
-        return `"${col}" = CASE ${cases} ELSE "${col}" END`;
+        return `"${String(col)}" = CASE ${cases} ELSE "${String(col)}" END`;
       });
 
       // 4. Build the WHERE compound IN (...) clause:
