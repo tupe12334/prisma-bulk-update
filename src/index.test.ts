@@ -1,32 +1,25 @@
 import { PrismaClient } from "@prisma/client";
-import createPrismaMock from "prisma-mock";
 import { extendedPrisma } from "./index";
 import { execSync } from "child_process";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 
 let prisma: PrismaClient;
-
-// jest.mock("@prisma/client", () => {
-//   const actualPrismaClient = jest.requireActual("@prisma/client");
-//   return {
-//     ...actualPrismaClient,
-//     PrismaClient: jest.fn(() => prisma),
-//   };
-// });
 
 beforeAll(() => {
   // Start Docker container
   execSync("docker-compose up -d", { stdio: "inherit" });
+  prisma = new PrismaClient();
 });
 
-afterAll(() => {
+afterAll(async () => {
   // Stop Docker container
   execSync("docker-compose down", { stdio: "inherit" });
+  await prisma.$disconnect();
 });
 
 describe("bulkUpdateCompoundWhere", () => {
-  beforeEach(() => {
-    prisma = createPrismaMock();
+  beforeEach(async () => {
+    await prisma.user.deleteMany(); // Clean up the table before each test
   });
 
   it("should update multiple rows with compound where clause", async () => {
