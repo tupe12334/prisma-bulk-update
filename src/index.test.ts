@@ -5,10 +5,11 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 
 let prisma: PrismaClient;
 
-beforeAll(() => {
+beforeAll(async () => {
   // Start Docker container
   execSync("docker-compose up -d", { stdio: "inherit" });
   prisma = new PrismaClient();
+  await prisma.$connect();
 });
 
 afterAll(async () => {
