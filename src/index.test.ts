@@ -2,16 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import createPrismaMock from "prisma-mock";
 import { extendedPrisma } from "./index";
 import { execSync } from "child_process";
+import { describe, it, expect } from "vitest";
 
 let prisma: PrismaClient;
 
-jest.mock("@prisma/client", () => {
-  const actualPrismaClient = jest.requireActual("@prisma/client");
-  return {
-    ...actualPrismaClient,
-    PrismaClient: jest.fn(() => prisma),
-  };
-});
+// jest.mock("@prisma/client", () => {
+//   const actualPrismaClient = jest.requireActual("@prisma/client");
+//   return {
+//     ...actualPrismaClient,
+//     PrismaClient: jest.fn(() => prisma),
+//   };
+// });
 
 beforeAll(() => {
   // Start Docker container

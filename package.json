@@ -7,7 +7,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "prisma:generate": "prisma generate",
-    "test": "jest"
+    "test": "vitest"
   },
   "keywords": [
     "prisma",
@@ -21,15 +21,12 @@
     "prisma": "^3.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^28.0.3",
     "@types/node": "^22.10.2",
     "eslint": "^7.0.0",
-    "jest": "^28.0.3",
-    "jest-environment-jsdom": "^28.0.3",
     "jest-mock-extended": "4.0.0-beta1",
     "prisma-mock": "^0.10.3",
-    "ts-jest": "^28.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^0.24.3"
   },
   "repository": {
     "type": "git",
