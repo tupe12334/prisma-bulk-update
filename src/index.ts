@@ -7,7 +7,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
  *  - `data`: Partial data to update in the matched row
  */
 type BulkUpdateCompoundWhereRow<T> = {
-  where: { [k: string]: any };
+  where: Partial<Record<keyof T, any>>;
   data: Partial<T>;
 };
 
