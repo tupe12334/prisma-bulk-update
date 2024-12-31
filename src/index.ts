@@ -1,5 +1,6 @@
 // prisma.extensions.ts
 import { PrismaClient, Prisma } from "@prisma/client";
+import { sql, join } from "@prisma/client/runtime"; // Add this line
 
 /**
  * Shape of a single bulk-update item:
@@ -55,23 +56,21 @@ export const extendedPrisma = prisma.$extends({
           // Only build a WHEN if the row actually has `data[col]` defined
           .filter((row) => row.data[col] !== undefined)
           .map((row) => {
-            const andClause = Prisma.join(
+            const andClause = join(
               uniqueColumns.map(
                 (uniqueKey) =>
-                  Prisma.sql`"${Prisma.raw(uniqueKey)}" = ${
-                    row.where[uniqueKey]
-                  }`
+                  sql`"${Prisma.raw(uniqueKey)}" = ${row.where[uniqueKey]}`
               ),
-              Prisma.sql` AND `
+              sql` AND `
             );
-            return Prisma.sql`WHEN (${andClause}) THEN ${
+            return sql`WHEN (${andClause}) THEN ${
               row.data[col as keyof typeof row.data]
             }`;
           });
 
-        return Prisma.sql`
+        return sql`
           "${Prisma.raw(col)}" = CASE
-            ${Prisma.join(cases, Prisma.sql` `)}
+            ${join(cases, sql` `)}
             ELSE "${Prisma.raw(col)}"
           END
         `;
@@ -80,26 +79,26 @@ export const extendedPrisma = prisma.$extends({
       // 4. Build the WHERE compound IN (...) clause:
       //    WHERE (unique1, unique2) IN ((val11, val12), (val21, val22), ...)
       //    For each row, we construct a tuple of its unique values.
-      const whereColumns = Prisma.join(
-        uniqueColumns.map((key) => Prisma.sql`"${Prisma.raw(key)}"`),
-        Prisma.sql`,`
+      const whereColumns = join(
+        uniqueColumns.map((key) => sql`"${Prisma.raw(key)}"`),
+        sql`,`
       );
 
-      const whereTuples = Prisma.join(
+      const whereTuples = join(
         rows.map((row) => {
-          const values = Prisma.join(
-            uniqueColumns.map((key) => Prisma.sql`${row.where[key]}`),
-            Prisma.sql`,`
+          const values = join(
+            uniqueColumns.map((key) => sql`${row.where[key]}`),
+            sql`,`
           );
-          return Prisma.sql`(${values})`;
+          return sql`(${values})`;
         }),
-        Prisma.sql`,`
+        sql`,`
       );
 
       // 5. Execute the single raw UPDATE statement.
       await this.$executeRaw`
         UPDATE "${Prisma.raw(tableName)}"
-        SET ${Prisma.join(setClauses, Prisma.sql`, `)}
+        SET ${join(setClauses, sql`, `)}
         WHERE (${whereColumns}) IN (${whereTuples});
       `;
     },
