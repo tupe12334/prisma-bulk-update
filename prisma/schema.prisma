@@ -26,4 +26,5 @@ model User {
 enum Status {
   ACTIVE
   INACTIVE
+  PENDING
 }
