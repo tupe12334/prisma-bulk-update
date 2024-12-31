@@ -54,14 +54,11 @@ export const extendedPrisma = prisma.$extends({
           .filter((row) => row.data[col] !== undefined)
           .map((row) => {
             const andClause = uniqueColumns
-              .map(
-                (uniqueKey) =>
-                  `"${uniqueKey}" = ${Prisma.sql`${row.where[uniqueKey]}`}`
-              )
+              .map((uniqueKey) => `"${uniqueKey}" = '${row.where[uniqueKey]}'`)
               .join(" AND ");
-            return `WHEN (${andClause}) THEN ${Prisma.sql`${
+            return `WHEN (${andClause}) THEN '${
               row.data[col as keyof typeof row.data]
-            }`}`;
+            }'`;
           })
           .join(" ");
         return `"${col}" = CASE ${cases} ELSE "${col}" END`;
@@ -74,7 +71,7 @@ export const extendedPrisma = prisma.$extends({
       const whereTuples = rows
         .map((row) => {
           const values = uniqueColumns
-            .map((key) => Prisma.sql`${row.where[key]}`)
+            .map((key) => `'${row.where[key]}'`)
             .join(",");
           return `(${values})`;
         })
