@@ -112,8 +112,20 @@ describe("bulkUpdateCompoundWhere", () => {
 
     const users = await prisma.user.findMany();
     expect(users).toEqual([
-      { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
-      { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      {
+        id: users[0].id,
+        orgId: 1,
+        email: "alice@corp.com",
+        name: "Alice",
+        status: "PENDING",
+      },
+      {
+        id: users[1].id,
+        orgId: 1,
+        email: "bob@corp.com",
+        name: "Bob",
+        status: "PENDING",
+      },
     ]);
   });
 
