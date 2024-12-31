@@ -1,35 +1,42 @@
-import { describe, it, expect, beforeAll, jest } from "@jest/globals";
 import { PrismaClient } from "@prisma/client";
+import createPrismaMock from "prisma-mock";
 import { extendedPrisma } from "./index";
-import { mockDeep, mockReset } from "prisma-mock";
+import { execSync } from "child_process";
 
-const prisma = mockDeep<PrismaClient>();
+let prisma: PrismaClient;
 
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn(() => prisma),
-}));
+jest.mock("@prisma/client", () => {
+  const actualPrismaClient = jest.requireActual("@prisma/client");
+  return {
+    ...actualPrismaClient,
+    PrismaClient: jest.fn(() => prisma),
+  };
+});
+
+beforeAll(() => {
+  // Start Docker container
+  execSync("docker-compose up -d", { stdio: "inherit" });
+});
+
+afterAll(() => {
+  // Stop Docker container
+  execSync("docker-compose down", { stdio: "inherit" });
+});
 
 describe("bulkUpdateCompoundWhere", () => {
-  beforeAll(() => {
-    // Setup: Reset mock before each test
-    mockReset(prisma);
+  beforeEach(() => {
+    prisma = createPrismaMock();
   });
 
   it("should update multiple rows with compound where clause", async () => {
-    prisma.user.findUnique
-      .mockResolvedValueOnce({
-        orgId: 1,
-        email: "alice@corp.com",
-        name: "Alice Updated",
-        status: "ACTIVE",
-      })
-      .mockResolvedValueOnce({
-        orgId: 1,
-        email: "bob@corp.com",
-        status: "INACTIVE",
-      });
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", status: "PENDING" },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
+      ],
+    });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.bulkUpdateCompoundWhere("user", [
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { name: "Alice Updated", status: "ACTIVE" },
