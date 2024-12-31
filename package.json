@@ -7,7 +7,9 @@
     "build": "tsc",
     "lint": "eslint .",
     "prisma:generate": "prisma generate",
-    "test": "vitest"
+    "test": "vitest",
+    "setup": "npm run prisma:db && npm run prisma:generate",
+    "prisma:db": "prisma db push"
   },
   "keywords": [
     "prisma",

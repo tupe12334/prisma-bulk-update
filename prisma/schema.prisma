@@ -14,10 +14,16 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String
-  name  String?
-  orgId Int
+  id     Int     @id @default(autoincrement())
+  email  String
+  name   String?
+  orgId  Int
+  status Status
 
   @@unique([orgId, email])
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
 }
