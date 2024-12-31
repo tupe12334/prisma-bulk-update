@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  id     Int     @id @default(autoincrement())
-  email  String
-  name   String?
-  orgId  Int
-  status Status
+  id       Int      @id @default(autoincrement())
+  email    String
+  name     String?
+  orgId    Int
+  status   Status?
+  isActive Boolean?
 
   @@unique([orgId, email])
 }

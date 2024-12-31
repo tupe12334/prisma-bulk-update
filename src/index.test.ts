@@ -202,4 +202,33 @@ describe("bulkUpdateCompoundWhere", () => {
 
     expect(alice).toMatchObject({ name: null, status: "ACTIVE" });
   });
+  it("should handle updates with boolean values", async () => {
+    await prisma.user.createMany({
+      data: [
+        { orgId: 1, email: "alice@corp.com", name: "Alice", isActive: false },
+        { orgId: 1, email: "bob@corp.com", name: "Bob", isActive: false },
+      ],
+    });
+
+    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+      {
+        where: { orgId: 1, email: "alice@corp.com" },
+        data: { isActive: true },
+      },
+      {
+        where: { orgId: 1, email: "bob@corp.com" },
+        data: { isActive: true },
+      },
+    ]);
+
+    const alice = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
+    });
+    const bob = await prisma.user.findUnique({
+      where: { orgId_email: { orgId: 1, email: "bob@corp.com" } },
+    });
+
+    expect(alice).toMatchObject({ isActive: true });
+    expect(bob).toMatchObject({ isActive: true });
+  });
 });
