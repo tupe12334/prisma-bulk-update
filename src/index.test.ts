@@ -1,9 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 import { extendedPrisma } from "./index";
 import { execSync } from "child_process";
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+} from "vitest";
+import fs from "fs";
+import path from "path";
 
 let prisma: PrismaClient;
+let testTimestamp: string;
 
 beforeAll(async () => {
   // Start Docker container
@@ -18,8 +29,22 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
+afterEach(async () => {
+  const data = await prisma.user.findMany();
+  const snapshotsDir = path.resolve(__dirname, "../snapshots");
+  const testDir = path.join(snapshotsDir, testTimestamp);
+  if (!fs.existsSync(testDir)) {
+    fs.mkdirSync(testDir);
+  }
+  fs.writeFileSync(
+    path.join(testDir, "after.json"),
+    JSON.stringify(data, null, 2)
+  );
+});
+
 describe("bulkUpdateCompoundWhere", () => {
   beforeEach(async () => {
+    testTimestamp = new Date().toISOString().replace(/[:.]/g, "-");
     await prisma.user.deleteMany(); // Clean up the table before each test
   });
 
@@ -30,6 +55,17 @@ describe("bulkUpdateCompoundWhere", () => {
         { orgId: 1, email: "bob@corp.com", name: "Bob", status: "PENDING" },
       ],
     });
+
+    const snapshotsDir = path.resolve(__dirname, "../snapshots");
+    const testDir = path.join(snapshotsDir, testTimestamp);
+    if (!fs.existsSync(testDir)) {
+      fs.mkdirSync(testDir);
+    }
+    const beforeData = await prisma.user.findMany();
+    fs.writeFileSync(
+      path.join(testDir, "before.json"),
+      JSON.stringify(beforeData, null, 2)
+    );
 
     await extendedPrisma.bulkUpdateCompoundWhere("User", [
       {

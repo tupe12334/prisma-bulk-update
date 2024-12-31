@@ -86,19 +86,3 @@ export const extendedPrisma = prisma.$extends({
     },
   },
 });
-
-// Example usage:
-(async () => {
-  // Suppose you have a "User" table with a compound unique key on (orgId, email).
-  // For each row, you provide `where: { orgId, email }` + the `data` to update.
-  await extendedPrisma.bulkUpdateCompoundWhere("User", [
-    {
-      where: { orgId: 1, email: "alice@corp.com" },
-      data: { name: "Alice Updated", status: "ACTIVE" },
-    },
-    {
-      where: { orgId: 1, email: "bob@corp.com" },
-      data: { status: "INACTIVE" },
-    },
-  ]);
-})();
