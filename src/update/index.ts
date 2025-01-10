@@ -21,6 +21,7 @@ type BulkUpdateCompoundWhereRow<T> = {
 const prisma = new PrismaClient();
 
 export const extendedPrisma = prisma.$extends({
+  name: "bulkUpdateCompoundWhere",
   model: {
     $allModels: {
       /**
