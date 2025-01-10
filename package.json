@@ -9,8 +9,9 @@
     "prisma:generate": "prisma generate",
     "test": "vitest",
     "pretest": "npm run setup",
-    "setup": "docker compose up -d && npm run prisma:db && npm run prisma:generate",
-    "prisma:db": "prisma db push"
+    "setup": "docker compose up -d && sleep 1 && npm run prisma:db && npm run prisma:generate",
+    "prisma:db": "prisma db push",
+    "posttest": "docker compose down -v"
   },
   "keywords": [
     "prisma",
