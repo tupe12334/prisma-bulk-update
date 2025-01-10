@@ -24,7 +24,7 @@ export const extendedPrisma = prisma.$extends({
      * @param rows      Array of objects, each with `where` (compound unique) + `data` to update
      */
     async bulkUpdateCompoundWhere<T>(
-      tableName: string,
+      tableName: Prisma.ModelName,
       rows: BulkUpdateCompoundWhereRow<T>[]
     ): Promise<void> {
       if (rows.length === 0) return;
