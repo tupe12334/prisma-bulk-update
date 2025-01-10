@@ -1,4 +1,11 @@
-// prisma.extensions.ts
+/**
+ * This file contains a custom extension for Prisma Client that adds a new method
+ * `bulkUpdateCompoundWhere` to all models. This method allows you to update multiple
+ * rows in a single SQL statement, with each row specifying its own compound `where`
+ * object.
+ * @author @tupe12334
+ *
+ */
 import { PrismaClient, Prisma } from "@prisma/client";
 
 /**
