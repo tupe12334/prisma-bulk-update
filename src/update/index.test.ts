@@ -58,11 +58,11 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 1, email: "alice@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
         data: { name: "Alice Updated", status: "ACTIVE" },
       },
       {
-        where: { orgId: 1, email: "bob@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "bob@corp.com" } },
         data: { status: "INACTIVE" },
       },
     ]);
@@ -94,7 +94,7 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 2, email: "charlie@corp.com" },
+        where: { orgId_email: { orgId: 2, email: "charlie@corp.com" } },
         data: { name: "Charlie", status: "ACTIVE" },
       },
     ]);
@@ -126,7 +126,7 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 1, email: "alice@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
         data: { status: "ACTIVE" },
       },
     ]);
@@ -148,11 +148,11 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 1, email: "alice@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
         data: { name: "Alice Updated", status: "ACTIVE" },
       },
       {
-        where: { orgId: 1, email: "bob@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "bob@corp.com" } },
         data: { name: "Bob Updated", status: "INACTIVE" },
       },
     ]);
@@ -178,7 +178,7 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 1, email: "alice@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
         data: { name: null, status: "ACTIVE" },
       },
     ]);
@@ -199,11 +199,11 @@ describe("bulkUpdateCompoundWhere", () => {
 
     await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
-        where: { orgId: 1, email: "alice@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "alice@corp.com" } },
         data: { isActive: true },
       },
       {
-        where: { orgId: 1, email: "bob@corp.com" },
+        where: { orgId_email: { orgId: 1, email: "bob@corp.com" } },
         data: { isActive: true },
       },
     ]);

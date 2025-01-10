@@ -14,8 +14,8 @@ import { PrismaClient, Prisma } from "@prisma/client";
  *  - `data`: Partial data to update in the matched row
  */
 type BulkUpdateCompoundWhereRow<T> = {
-  where: Partial<Record<keyof T, any>>;
-  data: Partial<T>;
+  where: Prisma.Args<T, "findUnique">["where"];
+  data: Prisma.Args<T, "update">["data"];
 };
 
 const prisma = new PrismaClient();
@@ -33,6 +33,7 @@ export const extendedPrisma = prisma.$extends({
        * @returns {Promise<void>} A promise that resolves when the update is complete.
        */
       async bulkUpdateCompoundWhere<T>(
+        this: T,
         rows: BulkUpdateCompoundWhereRow<T>[]
       ): Promise<void> {
         if (rows.length === 0) return;
