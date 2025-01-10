@@ -66,10 +66,15 @@ export const extendedPrisma = prisma.$extends({
             .filter((row) => row.data[col] !== undefined)
             .map((row) => {
               const andClause = uniqueColumns
-                .map(
-                  (uniqueKey) =>
-                    `"${uniqueKey}" = '${row.where[uniqueKey as keyof T]}'`
-                )
+                .map((uniqueKey) => {
+                  const value = row.where[uniqueKey as keyof T];
+                  if (typeof value === "object") {
+                    return Object.entries(value)
+                      .map(([key, val]) => `"${key}" = '${val}'`)
+                      .join(" AND ");
+                  }
+                  return `"${uniqueKey}" = '${value}'`;
+                })
                 .join(" AND ");
               const value =
                 row.data[col as keyof typeof row.data] === null
@@ -84,11 +89,28 @@ export const extendedPrisma = prisma.$extends({
         // 4. Build the WHERE compound IN (...) clause:
         //    WHERE (unique1, unique2) IN ((val11, val12), (val21, val22), ...)
         //    For each row, we construct a tuple of its unique values.
-        const whereColumns = uniqueColumns.map((key) => `"${key}"`).join(",");
+        const whereColumns = uniqueColumns
+          .map((key) => {
+            if (typeof rows[0].where[key as keyof T] === "object") {
+              return Object.keys(rows[0].where[key as keyof T])
+                .map((subKey) => `"${subKey}"`)
+                .join(",");
+            }
+            return `"${key}"`;
+          })
+          .join(",");
         const whereTuples = rows
           .map((row) => {
             const values = uniqueColumns
-              .map((key) => `'${row.where[key as keyof T]}'`)
+              .map((key) => {
+                const value = row.where[key as keyof T];
+                if (typeof value === "object") {
+                  return Object.values(value)
+                    .map((val) => `'${val}'`)
+                    .join(",");
+                }
+                return `'${value}'`;
+              })
               .join(",");
             return `(${values})`;
           })
