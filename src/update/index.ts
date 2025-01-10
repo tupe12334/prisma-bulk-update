@@ -78,7 +78,7 @@ export const extendedPrisma = prisma.$extends({
       const whereTuples = rows
         .map((row) => {
           const values = uniqueColumns
-            .map((key) => `'${row.where[key]}'`)
+            .map((key) => `'${row.where[key as keyof T]}'`)
             .join(",");
           return `(${values})`;
         })
