@@ -12,6 +12,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
  * Shape of a single bulk-update item:
  *  - `where`: An object with the compound unique fields
  *  - `data`: Partial data to update in the matched row
+ * @template T The type of the model being updated.
  */
 type BulkUpdateCompoundWhereRow<T> = {
   where: Prisma.Args<T, "findUnique">["where"];
