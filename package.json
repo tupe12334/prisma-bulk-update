@@ -9,8 +9,8 @@
     "prisma:generate": "prisma generate",
     "test": "vitest",
     "pretest": "npm run setup",
-    "setup": "docker compose up -d && sleep 1 && npm run prisma:db && npm run prisma:generate",
-    "prisma:db": "prisma db push",
+    "setup": "npm run prisma:generate",
+    "prisma:push": "prisma db push",
     "posttest": "docker compose down -v"
   },
   "keywords": [
@@ -25,7 +25,9 @@
     "prisma": "5.9.1"
   },
   "devDependencies": {
+    "@types/dockerode": "^3.3.34",
     "@types/node": "^22.10.2",
+    "dockerode": "^4.0.3",
     "eslint": "^7.0.0",
     "jest-mock-extended": "4.0.0-beta1",
     "prisma-mock": "^0.10.3",

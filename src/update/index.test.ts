@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { extendedPrisma } from "./";
-import { execSync } from "child_process";
+
 import {
   describe,
   it,
@@ -12,21 +12,20 @@ import {
 } from "vitest";
 import fs from "fs";
 import path from "path";
+import { setup, teardown } from "../setup";
 
 let prisma: PrismaClient;
 let testTimestamp: string;
 
 beforeAll(async () => {
-  // Start Docker container
-  execSync("docker-compose up -d", { stdio: "inherit" });
+  await setup();
   prisma = new PrismaClient();
   await prisma.$connect();
 });
 
 afterAll(async () => {
-  // Stop Docker container
-  execSync("docker-compose down", { stdio: "inherit" });
   await prisma.$disconnect();
+  await teardown();
 });
 
 afterEach(async () => {
