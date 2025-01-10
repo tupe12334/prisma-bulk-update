@@ -56,18 +56,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    const snapshotsDir = path.resolve(__dirname, "../snapshots");
-    const testDir = path.join(snapshotsDir, testTimestamp);
-    if (!fs.existsSync(testDir)) {
-      fs.mkdirSync(testDir, { recursive: true });
-    }
-    const beforeData = await prisma.user.findMany();
-    fs.writeFileSync(
-      path.join(testDir, "before.json"),
-      JSON.stringify(beforeData, null, 2)
-    );
-
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { name: "Alice Updated", status: "ACTIVE" },
@@ -90,7 +79,7 @@ describe("bulkUpdateCompoundWhere", () => {
   });
 
   it("should handle empty rows array", async () => {
-    await extendedPrisma.bulkUpdateCompoundWhere("User", []);
+    await extendedPrisma.user.bulkUpdateCompoundWhere([]);
     const users = await prisma.user.findMany();
     expect(users).toHaveLength(0);
   });
@@ -103,7 +92,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 2, email: "charlie@corp.com" },
         data: { name: "Charlie", status: "ACTIVE" },
@@ -135,7 +124,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { status: "ACTIVE" },
@@ -157,7 +146,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { name: "Alice Updated", status: "ACTIVE" },
@@ -187,7 +176,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { name: null, status: "ACTIVE" },
@@ -208,7 +197,7 @@ describe("bulkUpdateCompoundWhere", () => {
       ],
     });
 
-    await extendedPrisma.bulkUpdateCompoundWhere("User", [
+    await extendedPrisma.user.bulkUpdateCompoundWhere([
       {
         where: { orgId: 1, email: "alice@corp.com" },
         data: { isActive: true },
