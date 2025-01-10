@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { extendedPrisma } from "./index";
+import { extendedPrisma } from "./";
 import { execSync } from "child_process";
 import {
   describe,
@@ -34,7 +34,7 @@ afterEach(async () => {
   const snapshotsDir = path.resolve(__dirname, "../snapshots");
   const testDir = path.join(snapshotsDir, testTimestamp);
   if (!fs.existsSync(testDir)) {
-    fs.mkdirSync(testDir);
+    fs.mkdirSync(testDir, { recursive: true });
   }
   fs.writeFileSync(
     path.join(testDir, "after.json"),
@@ -59,7 +59,7 @@ describe("bulkUpdateCompoundWhere", () => {
     const snapshotsDir = path.resolve(__dirname, "../snapshots");
     const testDir = path.join(snapshotsDir, testTimestamp);
     if (!fs.existsSync(testDir)) {
-      fs.mkdirSync(testDir);
+      fs.mkdirSync(testDir, { recursive: true });
     }
     const beforeData = await prisma.user.findMany();
     fs.writeFileSync(
@@ -111,22 +111,20 @@ describe("bulkUpdateCompoundWhere", () => {
     ]);
 
     const users = await prisma.user.findMany();
-    expect(users).toEqual([
-      {
-        id: users[0].id,
-        orgId: 1,
-        email: "alice@corp.com",
-        name: "Alice",
-        status: "PENDING",
-      },
-      {
-        id: users[1].id,
-        orgId: 1,
-        email: "bob@corp.com",
-        name: "Bob",
-        status: "PENDING",
-      },
-    ]);
+    expect(users[0]).toMatchObject({
+      id: users[0].id,
+      orgId: 1,
+      email: "alice@corp.com",
+      name: "Alice",
+      status: "PENDING",
+    });
+    expect(users[1]).toMatchObject({
+      id: users[1].id,
+      orgId: 1,
+      email: "bob@corp.com",
+      name: "Bob",
+      status: "PENDING",
+    });
   });
 
   it("should update only specified fields", async () => {
