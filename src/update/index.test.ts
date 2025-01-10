@@ -31,7 +31,7 @@ afterAll(async () => {
 
 afterEach(async () => {
   const data = await prisma.user.findMany();
-  const snapshotsDir = path.resolve(__dirname, "../snapshots");
+  const snapshotsDir = path.resolve(__dirname, "../../snapshots");
   const testDir = path.join(snapshotsDir, testTimestamp);
   if (!fs.existsSync(testDir)) {
     fs.mkdirSync(testDir, { recursive: true });
