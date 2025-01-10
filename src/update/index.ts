@@ -20,8 +20,9 @@ export const extendedPrisma = prisma.$extends({
        * Update multiple rows in one SQL statement, with each row specifying its own
        * compound `where` object.
        *
-       * @param tableName The DB table to update (e.g. "User")
-       * @param rows      Array of objects, each with `where` (compound unique) + `data` to update
+       * @template T The type of the model being updated.
+       * @param {BulkUpdateCompoundWhereRow<T>[]} rows - Array of objects, each with `where` (compound unique) and `data` to update.
+       * @returns {Promise<void>} A promise that resolves when the update is complete.
        */
       async bulkUpdateCompoundWhere<T>(
         rows: BulkUpdateCompoundWhereRow<T>[]
