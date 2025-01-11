@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { extendedPrisma } from "./";
+import { extendedPrisma } from "./update";
 import { execSync } from "child_process";
 import {
   describe,
